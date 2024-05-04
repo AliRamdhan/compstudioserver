@@ -39,7 +39,7 @@ func ConnectDB() error {
 }
 
 func AutoMigrate() error {
-	return DB.AutoMigrate(&model.User{}, &model.User{}, &model.Track{}, &model.Status{}, &model.Service{}, &model.CategoryService{}, &model.Product{})
+	return DB.AutoMigrate(&model.User{}, &model.User{}, &model.Track{}, &model.Status{}, &model.Service{}, &model.CategoryService{}, &model.Product{}, &model.Messages{})
 	// return DB.AutoMigrate(&model.Client{}, &model.Profile{})
 }
 func SeedData() ([]model.User, []model.Role) {

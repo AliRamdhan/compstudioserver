@@ -30,7 +30,7 @@ func (th *TrackStatusHandler) CreateTrackStatus(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusCreated, gin.H{"message": "Track created successfully", "Track Status": trackStatus})
+	c.JSON(http.StatusCreated, gin.H{"message": "Track created successfully", "TrackStatus": trackStatus})
 }
 
 func (th *TrackStatusHandler) GetAllTrackStatus(c *gin.Context) {
@@ -39,7 +39,7 @@ func (th *TrackStatusHandler) GetAllTrackStatus(c *gin.Context) {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
-	c.JSON(http.StatusOK, gin.H{"message": "All Track Status", "Track Status": trackStatus})
+	c.JSON(http.StatusOK, gin.H{"message": "All Track Status", "TrackStatus": trackStatus})
 }
 
 func (th *TrackStatusHandler) UpdateTrackStatus(c *gin.Context) {
@@ -63,7 +63,7 @@ func (th *TrackStatusHandler) UpdateTrackStatus(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusOK, gin.H{"message": "Track Status updated successfully", "Track Status": trackStatus})
+	c.JSON(http.StatusOK, gin.H{"message": "Track Status updated successfully", "TrackStatus": trackStatus})
 }
 
 func (th *TrackStatusHandler) DeleteTrackStatus(c *gin.Context) {

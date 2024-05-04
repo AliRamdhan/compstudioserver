@@ -102,3 +102,16 @@ func ServiceProducts(r *gin.Engine, productService *services.ProductServices) {
 		productRoutes.DELETE("/delete/:productId", productHandler.DeleteProduct)
 	}
 }
+
+func MessageService(r *gin.Engine, messageService *services.MessageService) {
+	routesHandler := handlers.NewMessageHandler(messageService)
+	routesService := r.Group("/message")
+	{
+		routesService.POST("/create", routesHandler.CreateMessage)
+		// routesService.PUT("/read/:serviceId", routesHandler.MarkMessageAsRead)
+		routesService.GET("/all", routesHandler.GetAllMessage)
+		routesService.GET("service/:serviceId/message", routesHandler.GetMessageAndMarkAsRead)
+		routesService.PUT("/update/:messageId", routesHandler.UpdateMessage)
+		routesService.DELETE("delete/:messageId", routesHandler.DeleteMessage)
+	}
+}

@@ -42,6 +42,7 @@ func main() {
 	compService := services.NewServiceComp()
 	trackService := services.NewTrackService()
 	productService := services.NewProductServices()
+	messageService := services.NewMessageService()
 
 	//Setup middleware
 	r.Use(enableCORS())
@@ -55,6 +56,7 @@ func main() {
 	api.ServiceTrackComp(r, trackService)
 	api.Servicecomp(r, compService)
 	api.ServiceProducts(r, productService)
+	api.MessageService(r, messageService)
 
 	r.GET("/", func(c *gin.Context) {
 		// message := fmt.Sprintf("Hello World %s")
