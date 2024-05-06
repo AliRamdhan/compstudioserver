@@ -13,7 +13,9 @@ func NewMessageService() *MessageService {
 	return &MessageService{}
 }
 
-func (sc *MessageService) CreateMessage(message *model.Messages) error {
+func (sc *MessageService) CreateMessage(message *model.Messages, userId uint, serviceId uint) error {
+	message.MessageUser = userId
+	message.MessageService = serviceId
 	message.MessageISRead = false
 	message.CreatedAt = time.Now().Format("2006-01-02 15:04:05")
 	return config.DB.Create(message).Error
@@ -21,7 +23,7 @@ func (sc *MessageService) CreateMessage(message *model.Messages) error {
 
 func (sc *MessageService) GetAllMessage() ([]model.Messages, error) {
 	var messages []model.Messages
-	if err := config.DB.Find(&messages).Error; err != nil {
+	if err := config.DB.Preload("Service").Preload("User").Find(&messages).Error; err != nil {
 		return nil, err
 	}
 	return messages, nil
@@ -29,7 +31,7 @@ func (sc *MessageService) GetAllMessage() ([]model.Messages, error) {
 
 func (ts *MessageService) GetMessageByServiceId(serviceId uint) ([]model.Messages, error) {
 	var messages []model.Messages
-	if err := config.DB.Where("message_service = ?", serviceId).Find(&messages).Error; err != nil {
+	if err := config.DB.Preload("Service").Preload("User").Where("message_service = ?", serviceId).Find(&messages).Error; err != nil {
 		return nil, err
 	}
 	return messages, nil

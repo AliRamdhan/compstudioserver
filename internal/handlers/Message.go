@@ -23,8 +23,19 @@ func (sh *MessageHandler) CreateMessage(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
+	userId := message.MessageUser
+	serviceId := message.MessageService
+	if userId == 0 {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Authentication first"})
+		return
+	}
 
-	if err := sh.messageService.CreateMessage(&message); err != nil {
+	// Check if customerId is missing or invalid
+	if serviceId == 0 {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid or missing service ID"})
+		return
+	}
+	if err := sh.messageService.CreateMessage(&message, userId, serviceId); err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
