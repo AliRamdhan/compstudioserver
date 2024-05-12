@@ -36,6 +36,13 @@ func (ts *MessageService) GetMessageByServiceId(serviceId uint) ([]model.Message
 	}
 	return messages, nil
 }
+func (sc *MessageService) GetAllMessagesByServiceId(serviceId uint) ([]model.Messages, error) {
+	var messages []model.Messages
+	if err := config.DB.Preload("Service").Preload("User").Where("message_service = ?", serviceId).Order("created_at desc").Limit(1).Find(&messages).Error; err != nil {
+		return nil, err
+	}
+	return messages, nil
+}
 
 func (sc *MessageService) MarkMessageAsRead(serviceId uint) error {
 	// Update message status

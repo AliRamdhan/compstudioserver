@@ -62,7 +62,7 @@ func (au *AuthHandler) Login(c *gin.Context) {
 	}
 
 	// Generate token
-	tokenString, err := au.authService.GenerateToken(user.Email, user.Username, int(user.RoleUser))
+	tokenString, err := au.authService.GenerateToken(int(user.UserID), user.Email, user.Username, int(user.RoleUser))
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return

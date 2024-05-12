@@ -40,6 +40,14 @@ func (sc *ServiceComp) GetDetailServiceById(serviceId uint) (*model.Service, err
 	return &services, nil
 }
 
+func (sc *ServiceComp) GetServiceByUserId(userId uint) ([]model.Service, error) {
+	var services []model.Service
+	if err := config.DB.Preload("CategoryService").Preload("User").Where("customer_user = ?", userId).Find(&services).Error; err != nil {
+		return nil, err
+	}
+	return services, nil
+}
+
 func (sc *ServiceComp) UpdateServiceComp(updateService *model.Service, serviceId uint, catService uint) error {
 	var existingService model.Service
 	if err := config.DB.First(&existingService, "service_id = ?", serviceId).Error; err != nil {

@@ -77,6 +77,34 @@ func (sh *MessageHandler) GetMessageAndMarkAsRead(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"message": "Messages retrieved and marked as read successfully", "serviceId": serviceId, "Messages": messages})
 }
 
+func (sh *MessageHandler) GetAllMessagesByServiceId(c *gin.Context) {
+	serviceIdStr := c.Param("serviceId")
+	var serviceId uint
+	_, err := fmt.Sscanf(serviceIdStr, "%d", &serviceId)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid service ID"})
+		return
+	}
+
+	// Get last message by service ID
+	messages, err := sh.messageService.GetAllMessagesByServiceId(serviceId)
+	if err != nil {
+		c.JSON(http.StatusNotFound, gin.H{"error": "Messages not found"})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"message": "Last message retrieved successfully", "serviceId": serviceId, "Messages": messages})
+}
+
+// func (sh *MessageHandler) GetLastMessages(c *gin.Context) {
+// 	messages, err := sh.messageService.GetAllMessagesByServiceId()
+// 	if err != nil {
+// 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+// 		return
+// 	}
+// 	c.JSON(http.StatusOK, gin.H{"message": "Last messages retrieved successfully", "Messages": messages})
+// }
+
 func (sh *MessageHandler) UpdateMessage(c *gin.Context) {
 	messageIdStr := c.Param("messageId")
 	var messageId uint

@@ -31,6 +31,23 @@ func (ts *TrackService) GetAllTrackService() ([]model.Track, error) {
 	}
 	return tracks, nil
 }
+func (ts *TrackService) GetAllLatestTracks() ([]model.Track, error) {
+	var latestTracks []model.Track
+
+	// Use raw SQL to fetch the latest tracks for each TrackNumber
+	rawSQL := `SELECT t1.* 
+				FROM tracks t1
+				INNER JOIN (
+					SELECT track_number, MAX(created_at) AS max_created_at
+					FROM tracks
+					GROUP BY track_number
+				) t2 ON t1.track_number = t2.track_number AND t1.created_at = t2.max_created_at`
+
+	if err := config.DB.Raw(rawSQL).Scan(&latestTracks).Error; err != nil {
+		return nil, err
+	}
+	return latestTracks, nil
+}
 
 func (ts *TrackService) GetTrackStatusByTrackNumber(trackNumber uuid.UUID) ([]model.Track, error) {
 	var track []model.Track
@@ -38,6 +55,14 @@ func (ts *TrackService) GetTrackStatusByTrackNumber(trackNumber uuid.UUID) ([]mo
 		return nil, err
 	}
 	return track, nil
+}
+
+func (ts *TrackService) GetTrackStatusByServiceId(serviceId uint) (*model.Track, error) {
+	var track model.Track
+	if err := config.DB.Preload("Service").Preload("Status").Where("service_id = ?", serviceId).First(&track).Error; err != nil {
+		return nil, err
+	}
+	return &track, nil
 }
 
 func (ts *TrackService) CreateProgressTrackStatusByTrackNumber(track *model.Track, trackNumber uuid.UUID, serviceId uint) error {

@@ -86,9 +86,16 @@ func (th *TrackHandler) GetAllTrack(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"message": "All Track ", "Tracks": track})
 }
 
+func (th *TrackHandler) GetAllLatestTrack(c *gin.Context) {
+	tracks, err := th.trackService.GetAllLatestTracks()
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+	c.JSON(http.StatusOK, gin.H{"message": "Latest Track for each TrackNumber", "Tracks": tracks})
+}
 func (th *TrackHandler) GetTrackStatusByTrackNumber(c *gin.Context) {
 	trackNumber := c.Param("trackNumber")
-
 	// Parse track number
 	trackID, err := uuid.Parse(trackNumber)
 	if err != nil {
@@ -102,6 +109,22 @@ func (th *TrackHandler) GetTrackStatusByTrackNumber(c *gin.Context) {
 		return
 	}
 
+	c.JSON(http.StatusCreated, gin.H{"message": "Track Status", "Track": track})
+}
+
+func (th *TrackHandler) GetTrackStatusByServiceId(c *gin.Context) {
+	trackIdStr := c.Param("serviceId")
+	var trackId uint
+	_, err := fmt.Sscanf(trackIdStr, "%d", &trackId)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid track status ID"})
+		return
+	}
+	track, err := th.trackService.GetTrackStatusByServiceId(trackId)
+	if err != nil {
+		c.JSON(http.StatusNotFound, gin.H{"error": "Track not found"})
+		return
+	}
 	c.JSON(http.StatusCreated, gin.H{"message": "Track Status", "Track": track})
 }
 

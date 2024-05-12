@@ -55,8 +55,9 @@ func (sh *ServiceCompHandler) GetAllService(c *gin.Context) {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
-	c.JSON(http.StatusOK, gin.H{"message": "All Service ", "Service Category": serviceComp})
+	c.JSON(http.StatusOK, gin.H{"message": "All Service ", "Services": serviceComp})
 }
+
 func (sh *ServiceCompHandler) GetDetailServiceById(c *gin.Context) {
 	serviceIdStr := c.Param("serviceId")
 
@@ -73,7 +74,26 @@ func (sh *ServiceCompHandler) GetDetailServiceById(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusOK, gin.H{"message": "Details tickets", "Service": services})
+	c.JSON(http.StatusOK, gin.H{"message": "Details service", "Service": services})
+}
+
+func (sh *ServiceCompHandler) GetServiceByUserId(c *gin.Context) {
+	userIdStr := c.Param("userId")
+
+	var userId uint
+	_, err := fmt.Sscanf(userIdStr, "%d", &userId)
+	// trackID, err := uuid.Parse(userId)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid user id format"})
+		return
+	}
+	services, err := sh.serviceComp.GetServiceByUserId(userId)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"message": "Service by User", "Service": services})
 }
 
 func (sh *ServiceCompHandler) UpdateService(c *gin.Context) {
@@ -102,7 +122,7 @@ func (sh *ServiceCompHandler) UpdateService(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusOK, gin.H{"message": "Product updated successfully", "product": service})
+	c.JSON(http.StatusOK, gin.H{"message": "Service updated successfully", "product": service})
 }
 
 func (sh *ServiceCompHandler) DeleteService(c *gin.Context) {
@@ -120,5 +140,5 @@ func (sh *ServiceCompHandler) DeleteService(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusOK, gin.H{"message": "Product deleted successfully"})
+	c.JSON(http.StatusOK, gin.H{"message": "Service deleted successfully"})
 }
